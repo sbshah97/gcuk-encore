@@ -11,12 +11,7 @@ import (
 	"encore.dev/pubsub"
 )
 
-// Welcome to Encore!
-// This is a simple "Hello World" project to get you started.
-//
-// To run it, execute "encore run" in your favorite shell.
-
-var Signups = pubsub.NewTopic[*Slideshow]("signups", pubsub.TopicConfig{
+var AuditEvents = pubsub.NewTopic[*Slideshow]("audit-events", pubsub.TopicConfig{
 	DeliveryGuarantee: pubsub.AtLeastOnce,
 })
 
@@ -61,7 +56,7 @@ func FetchSlideshow(ctx context.Context) (*Response, error) {
 		return nil, err
 	}
 
-	msgID, err := Signups.Publish(ctx, &Slideshow{
+	msgID, err := AuditEvents.Publish(ctx, &Slideshow{
 		Slideshow: SlideshowContent{
 			Author: jsonResponse.Slideshow.Author,
 		},
@@ -72,6 +67,6 @@ func FetchSlideshow(ctx context.Context) (*Response, error) {
 
 	// Return the response with both the greeting and the JSON data
 	return &Response{
-		MessageID: "Message ID: " + msgID,
+		MessageID: "Event successfully published, Message ID: " + msgID,
 	}, nil
 }

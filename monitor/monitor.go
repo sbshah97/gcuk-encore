@@ -8,7 +8,7 @@ import (
 )
 
 var _ = pubsub.NewSubscription(
-	api.Signups, "send-welcome-email",
+	api.AuditEvents, "get-audit-events",
 	pubsub.SubscriptionConfig[*api.Slideshow]{
 		Handler: SetSlideshowDetails,
 	},
@@ -22,7 +22,7 @@ func SetSlideshowDetails(ctx context.Context, api *api.Slideshow) error {
 
 // Get retrieves the original URL for the id.
 //
-//encore:api public method=GET path=/url/:id
+//encore:api public method=GET path=/slideshow/:id
 func GetAuthor(ctx context.Context, id string) (*api.Slideshow, error) {
 	var author_name string
 	err := db.QueryRow(ctx, `
