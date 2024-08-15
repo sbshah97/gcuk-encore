@@ -26,3 +26,4 @@ go.work.sum
 /.encore
 encore.gen.go
 encore.gen.cue
+/encore.gen
