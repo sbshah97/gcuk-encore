@@ -11,7 +11,7 @@ import (
 	"encore.dev/pubsub"
 )
 
-var AuditEvents = pubsub.NewTopic[*Slideshow]("audit-events", pubsub.TopicConfig{
+var AuditEvents = pubsub.NewTopic[*Events]("audit-events", pubsub.TopicConfig{
 	DeliveryGuarantee: pubsub.AtLeastOnce,
 })
 
@@ -56,10 +56,8 @@ func FetchSlideshow(ctx context.Context) (*Response, error) {
 		return nil, err
 	}
 
-	msgID, err := AuditEvents.Publish(ctx, &Slideshow{
-		Slideshow: SlideshowContent{
-			Author: jsonResponse.Slideshow.Author,
-		},
+	msgID, err := AuditEvents.Publish(ctx, &Events{
+		Author: jsonResponse.Slideshow.Author,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("error publishing signal: %w", err)

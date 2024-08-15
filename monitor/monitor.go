@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"context"
+	"time"
 
 	"encore.app/api"
 	"encore.dev/pubsub"
@@ -9,13 +10,13 @@ import (
 
 var _ = pubsub.NewSubscription(
 	api.AuditEvents, "get-audit-events",
-	pubsub.SubscriptionConfig[*api.Slideshow]{
-		Handler: SetSlideshowDetails,
+	pubsub.SubscriptionConfig[*api.Events]{
+		Handler: SetEvents,
 	},
 )
 
-func SetSlideshowDetails(ctx context.Context, api *api.Slideshow) error {
-	insert(ctx, api.Slideshow.Author)
+func SetEvents(ctx context.Context, api *api.Events) error {
+	insert(ctx, api.Author)
 
 	return nil
 }
@@ -23,15 +24,14 @@ func SetSlideshowDetails(ctx context.Context, api *api.Slideshow) error {
 // Get retrieves the original URL for the id.
 //
 //encore:api public method=GET path=/slideshow/:id
-func GetAuthor(ctx context.Context, id string) (*api.Slideshow, error) {
-	var author_name string
+func GetAuthor(ctx context.Context, id string) (*api.Events, error) {
+	// var author_name string
+	var created_at time.Time
 	err := db.QueryRow(ctx, `
-        SELECT author_name FROM events
+        SELECT created_at FROM events
         WHERE id = $1
-    `, id).Scan(&author_name)
-	return &api.Slideshow{
-		Slideshow: api.SlideshowContent{
-			Author: author_name,
-		},
+    `, id).Scan(&created_at)
+	return &api.Events{
+		CreatedAt: created_at,
 	}, err
 }

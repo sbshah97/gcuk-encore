@@ -1,5 +1,12 @@
 package api
 
+import "time"
+
+type Events struct {
+	Author    string    `json:"author"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type Slideshow struct {
 	Slideshow SlideshowContent `json:"slideshow"`
 }
